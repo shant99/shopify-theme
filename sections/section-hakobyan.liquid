@@ -1,0 +1,175 @@
+{% unless content_for_header contains 'section-hakobyan.css' %}
+  {{ 'section-hakobyan.css' | asset_url | stylesheet_tag }}
+{% endunless %}
+
+<section class="section-hakobyan">
+  <div class="about {{ section.settings.desktop_layout }}">
+    <div class="about-image {{ section.settings.image_ratio }}">
+      {% if section.settings.image != blank %}
+        {{
+          section.settings.image
+          | image_url: width: 1320
+          | image_tag:
+            width: section.settings.image.width,
+            widths: '450, 660, 900, 1320',
+            sizes: '100vw',
+            alt: 't:sections.section_hakobyan.image_alt'
+        }}
+      {% else %}
+        <div>
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {% endif %}
+    </div>
+    <div class="about-content">
+      {% if section.settings.heading != blank %}
+        <h2>
+          {{ section.settings.heading }}
+        </h2>
+      {% endif %}
+      {% if section.settings.text != blank %}
+        <p class="text divider">
+          {{ section.settings.text }}
+        </p>
+      {% endif %}
+      <p class="secondary-text">{{ section.settings.secondary_text | replace: '. ', '.&nbsp;' }}</p>
+      <div class="authors-wrapper">
+        <div class="authors-images">
+          {% for block in section.blocks %}
+            {% if block.type == 'author' %}
+              <div class="author" style="z-index: {{ forloop.length | plus: forloop.index }}">
+                {% if block.settings.avatar != blank %}
+                  {{
+                    block.settings.avatar
+                    | image_url: width: 150
+                    | image_tag:
+                      width: block.settings.avatar.width,
+                      widths: '50, 100, 150',
+                      sizes: '(max-width: 600px) 50px, (max-width: 1024px) 100px, 150px',
+                      alt: 't:sections.section_hakobyan.placeholder_alt',
+                      class: 'author-avatar'
+                  }}
+                {% else %}
+                  {{ 'hero-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="authors-about">
+          <div class="authors-name-wrapper">
+            {% for block in section.blocks %}
+              {% if block.type == 'author' %}
+                <span class="author-name">{{ block.settings.name | strip_html }}</span>
+                {%- unless forloop.last %},&nbsp; {% endunless %}
+              {% endif %}
+            {% endfor %}
+          </div>
+          {% if section.settings.text != blank %}
+            <p class="author-position">
+              {{ section.settings.author_position }}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.section_hakobyan.name",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.section_hakobyan.settings.image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "t:sections.section_hakobyan.settings.image_ratio.label",
+      "options": [
+        {
+          "value": "auto",
+          "label": "t:sections.section_hakobyan.settings.image_ratio.options.auto"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.section_hakobyan.settings.image_ratio.options.square"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.section_hakobyan.settings.image_ratio.options.portrait"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "t:sections.section_hakobyan.settings.heading.label",
+      "default": "<p>Some heading for this section</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.section_hakobyan.settings.text.label",
+      "default": "<p>Description of your company, company history, company founders, and so on.There may be several paragraphs here.</p>"
+    },
+    {
+      "type": "text",
+      "id": "secondary_text",
+      "label": "t:sections.section_hakobyan.settings.secondary_text.label",
+      "default": "Description of your company, company history, company founders, in two columns. You can also add any text. Add text about whatever you want."
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "label": "t:sections.section_hakobyan.settings.desktop_layout.label",
+      "options": [
+        {
+          "value": "image-left",
+          "label": "t:sections.section_hakobyan.settings.desktop_layout.options.image_left"
+        },
+        {
+          "value": "image-right",
+          "label": "t:sections.section_hakobyan.settings.desktop_layout.options.image_right"
+        }
+      ],
+      "default": "image-left"
+    },
+    {
+      "type": "text",
+      "id": "author_position",
+      "label": "t:sections.section_hakobyan.settings.author_position.label",
+      "default": "Position of authors or any other text."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "author",
+      "name": "t:sections.section_hakobyan.blocks.author.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "t:sections.section_hakobyan.blocks.author.settings.avatar"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "t:sections.section_hakobyan.blocks.author.settings.name.label",
+          "default": "Author name"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.section_hakobyan.name",
+      "blocks": [{ "type": "author" }, { "type": "author" }, { "type": "author" }]
+    }
+  ]
+}
+{% endschema %}
